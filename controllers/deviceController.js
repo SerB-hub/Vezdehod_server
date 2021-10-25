@@ -16,8 +16,8 @@ class DeviceController {
             const device = await Device.create({name, price, brandId, typeId, img: fileName})
 
             if (info) {
-                info = JSON.parse(info)
-                info.forEach(i =>
+                const arrayInfo = JSON.parse(info)
+                arrayInfo.forEach(i =>
                     DeviceInfo.create({
                         title: i.title,
                         description: i.description,
@@ -85,17 +85,17 @@ class DeviceController {
                     typeId: typeId
                  }, limit, offset})
         }
-        if (basketDeviceId && !brandId && ! typeId) {
-            if (Number(basketDeviceId) !== -1){
-                const array = basketDeviceId.split('-')
-                
+        if (basketDeviceId && !brandId && ! typeId && !searchField) {
+            const array = JSON.parse(basketDeviceId)
+
+            if (Number(array[0]) !== -1){      
                 for (let item of array) {
                     item = Number(item)
                 }
 
                 devices = await Device.findAndCountAll({where: {id: array}, limit, offset})
             } else {
-                devices = await Device.findAndCountAll({where: {id: basketDeviceId}, limit, offset})
+                devices = await Device.findAndCountAll({where: {id: array[0]}, limit, offset})
             }
             
         }
